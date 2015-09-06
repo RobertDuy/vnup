@@ -1,0 +1,183 @@
+.ie9 .mainCt .navMainCt,.ie8 .mainCt .navMainCt,.ie10 .mainCt .navMainCt,.navMainCt.sticky
+{
+	background-color:#f7f7f7
+}
+	#username_wtt_icon,#pass_wtt_icon
+{
+	margin-left:30px
+}
+.ie8 #popup_pass_wtt_icon
+{
+	margin-left:47px
+}
+.ie8 .navbar-nav>li>a
+{
+	padding-top:0;
+	padding-bottom:0
+}
+.ie8 .titleBoxNews
+{
+	background-color:#fff
+}
+.ie8 .rtForm .iploginNews
+{
+	line-height:25px;
+	text-indent:5px
+}
+.ie8 #pass_wtt_icon
+{
+	margin-left:30px
+}
+.ie8 .modal-dialog #pass_wtt_icon
+{
+	margin-left:47px
+}
+.ie8 .btn-login
+{
+	border:1px solid #e1e1e1
+}
+.ie8 .modal-dialog .fbloginNews,.ie8 .modal-dialog p
+{
+	margin-left:42px !important
+}
+.ie8 ul.ctnSubNewsCt
+{
+	border:1px solid #ddd
+}
+	@media screen and (min-width:1200px)
+{
+.ie8 .thumbHotNews img
+{
+	width:270px;
+	height:180px
+}
+.ie8 #centerNews,.ie8 #centerNewsContent
+{
+	width:553px
+}
+.ie8 .thumbNews img
+{
+	max-width:47px
+}
+.ie8 .lssNews a
+{
+	height:47px
+}
+.ie8 .ctnLssNews EM.thumbNews
+{
+	width:47px;
+	height:47px
+}
+.ie8 .pinkNews
+{
+	width:128px
+}
+.ie8 .fraCmt
+{
+	width:88%
+}
+
+}
+	@media screen and (min-width:992px) and (max-width:1199px)
+{
+.ie8 #centerNews,.ie8 #centerNewsContent
+{
+	width:628px
+}
+.ie8 .thumbHotNews img
+{
+	width:310px
+}
+.ie8 .imgwrap img
+{
+	width:100%
+}
+.ie8 .boxNews li
+{
+	margin-left:4px;
+	width:31%
+}
+.ie8 a.hover_blur .titleBoxNews
+{
+	width:100%
+}
+.ie8 .mainCt .navMainCt
+{
+	width:628px
+}
+.ie8 .ctnNavCt .orangeNews,.ie8 .ctnNavCt .greenNews,.ie8 .ctnNavCt .blueNews,.ie8 .ctnNavCt .purpleNews
+{
+	width:122px
+}
+.ie8 .ctnNavCt .pinkNews
+{
+	width:138px
+}
+.ie8 .fraCmt
+{
+	width:85%
+}
+.ie8 .category #centerNews,.ie8 .category #centerNewsContent
+{
+	width:620px
+}
+.ie8 .home .centerNews .mainCt
+{
+	margin-top:-45px
+}
+
+}
+	@media screen and (min-width:768px) and (max-width:991px)
+{
+.ie8 .lssNews a
+{
+	height:47px
+}
+.ie8 .ctnLssNews EM.thumbNews
+{
+	width:47px;
+	height:47px
+}
+.ie8 .thumbHotNews img
+{
+	width:300px
+}
+.ie8 .mainCt .navMainCt
+{
+	width:521px
+}
+.ie8 .ctnNavCt .pinkNews
+{
+	width:113px
+}
+.ie8 .fraCmt
+{
+	width:88%
+}
+
+}
+@media screen and (max-width:767px)
+{
+.ie8 .pinkNews
+{
+	width:24% !important
+}
+.ie8 .orangeNews,.ie8 .greenNews,.ie8 .blueNews,.ie8 .purpleNews
+{
+	width:19% !important
+}
+.ie8 .mainCt .navMainCt
+{
+	width:100%
+}
+.ie8 .mainCt .navMainCt.sticky
+{
+	width:calc(100% - 1.34em)
+}
+.ie8 .navMainCt .ctnNavCt
+{
+	width:100%
+}
+
+}
+
