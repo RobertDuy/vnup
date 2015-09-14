@@ -1,14 +1,3 @@
-<?php
-
-$wp_hasher;
-if ( empty($wp_hasher) ) {
-    require_once( 'D:/xampp/htdocs/vnup/wp-includes/class-phpass.php');
-    // By default, use the portable hash from phpass
-    $wp_hasher = new PasswordHash(8, true);
-}
-echo $wp_hasher->HashPassword( trim( '12345' ) );
-
-?>
 
 <div class="container container-top"></div>
 	<div id="main-container" class="wrap-container container clearfix">
@@ -16,7 +5,7 @@ echo $wp_hasher->HashPassword( trim( '12345' ) );
         
 			<div class="login-signup-container clearfix">
 				<h1 class="gutter-bottom clearfix align-center">
-					Log In        <aside class="clearfix">Don't have an account? <a class="call-to-action" href="#">Sign Up</a></aside>
+					Log In        <aside class="clearfix">Don't have an account? <a class="call-to-action" href="user/signup">Sign Up</a></aside>
 				</h1>
 				<div class="login-form-container">
 					<?php echo form_open('user/user/do_login'); ?>

@@ -6,7 +6,7 @@
 			<div class="login-signup-container">
 				<h1 class="gutter-bottom clearfix align-center">
 					Sign Up        <aside class="clearfix">
-						Already have an account? <a class="call-to-action" href="/site/login">Log In</a>        </aside>
+						Already have an account? <a class="call-to-action" href="<?php echo config_item('base_url'). 'user/user';?>">Log In</a>        </aside>
 				</h1>
 				<div class="signup-form-container">
 					<form id="yw0" action="#" method="POST">

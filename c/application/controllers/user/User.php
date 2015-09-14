@@ -66,8 +66,7 @@ class User extends CI_Controller
     }
 
     //function process normal user registration
-    public function signup()
-    {
+    public function signup(){
 
         $this->load->view('common/tpl_header');
         $this->load->view('user/tpl_signup');
