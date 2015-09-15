@@ -1,21 +1,26 @@
+name <?= $name; ?>
+email <?= $email; ?>
+image <?= $image; ?>
 
 <div class="container container-top"></div>
 	<div id="main-container" class="wrap-container container clearfix">
 		<div class="main-content full-width controller-site action-login">
         
 			<div class="login-signup-container clearfix">
-				<h1 class="gutter-bottom clearfix align-center">
-					Log In        <aside class="clearfix">Don't have an account? <a class="call-to-action" href="user/signup">Sign Up</a></aside>
+				<h1 class="gutter-bottom clearfix align-center"> Log In
+                    <aside class="clearfix">Don't have an account?
+                        <a class="call-to-action" href="user/signup">Sign Up</a>
+                    </aside>
 				</h1>
 				<div class="login-form-container">
-					<?php echo form_open('user/user/do_login'); ?>
+					<?php echo form_open('user/user'); ?>
 						
 						<div class="fullPage loginDiv clearfix">
 							<div>
 								<div class="clearfix" data-hook="partial-social-buttons">
 									<div class="col-xs-12">
 										<div class="col-xs-12 col-sm-6 social-left clearfix">
-											<a class="action-social-login medium button facebook social-button login-fb-link" rel="nofollow" href="#">
+											<a class="action-social-login medium button facebook social-button login-fb-link" rel="nofollow" href="<?= $facebookLoginUrl; ?>">
 												<i class="fa fa-facebook"></i><span>Log In with Facebook</span>
 											</a>
 										</div>                

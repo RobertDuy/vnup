@@ -520,4 +520,4 @@ $config['proxy_ips'] = '';
 | Array:		array('10.0.1.200', '192.168.5.0/24')
 */
 $config['themes'] = 'default';
-$config['root_dir'] = 'D:/xampp/htdocs/vnup';
+$config['root_dir'] = '/var/www/html/vnup/';
