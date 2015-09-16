@@ -18,6 +18,14 @@
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+        <style>
+            .error{
+                font-size: 12px;
+                color: red;
+            }
+        </style>
     </head>
     <body class="responsive">
 		<div id="site-wrapper" class="site-wrapper">

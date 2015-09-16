@@ -10,7 +10,7 @@
                     </aside>
 				</h1>
 				<div class="signup-form-container">
-                    <?php echo form_open('user/user/singup'); ?>
+                    <form accept-charset="utf-8" method="post" action="user/user/signup" id="signupFrom">
 						<div style="display:none"><input type="hidden" value="bdb0edf80e269d336ddf931b18a86545ad676c5d" name="YII_CSRF_TOKEN" /></div>
 						<div class="fullPage signupDiv clearfix">
 						<div class="clearfix gutter-bottom" data-hook="partial-social-buttons">
@@ -45,46 +45,46 @@
 						<div class="clearfix col-xs-12 col-sm-offset-2 col-sm-8 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4 no-padding" data-hook="partial-singup-form">
 							<div class="gutter-bottom">
 								<label class="clear required" for="EmailMemberRegistration_fname">First Name</label>
-								<input tabindex="1" class="medium clear" data-tip-position="bottom" name="EmailMemberRegistration[fname]" id="EmailMemberRegistration_fname" type="text" maxlength="40" />
+								<input tabindex="1" class="medium clear" data-tip-position="bottom" name="EmailMemberRegistration[fname]" id="EmailMemberRegistration_fname" type="text" maxlength="40" required />
 							</div>
 							<div class="gutter-bottom">
 								<label class="clear required" for="EmailMemberRegistration_lname">Last Name</label>
-								<input tabindex="2" class="medium clear" data-tip-position="bottom" name="EmailMemberRegistration[lname]" id="EmailMemberRegistration_lname" type="text" maxlength="100" />
+								<input tabindex="2" class="medium clear" data-tip-position="bottom" name="EmailMemberRegistration[lname]" id="EmailMemberRegistration_lname" type="text" maxlength="100" required/>
 							</div>
 
 							<div class="gutter-bottom">
 								<label class="clear required" for="EmailMemberRegistration_email">Your email</label>
-								<input tabindex="3" class="medium clear login-signup-email" data-tip-position="bottom" name="EmailMemberRegistration[email]" id="EmailMemberRegistration_email" type="email" />
+								<input tabindex="3" class="medium clear login-signup-email" data-tip-position="bottom" name="EmailMemberRegistration[email]" id="EmailMemberRegistration_email" type="email" required/>
 							</div>
 							<div class="gutter-bottom">
 								<label class="clear required" for="EmailMemberRegistration_password">Password</label>
-								<input tabindex="4" class="medium clear" autocomplete="off" data-tip-position="bottom" name="EmailMemberRegistration[password]" id="EmailMemberRegistration_password" type="password" maxlength="200" />
+								<input id="password" tabindex="4" class="medium clear" autocomplete="off" data-tip-position="bottom" name="EmailMemberRegistration[password]" id="EmailMemberRegistration_password" type="password" maxlength="200" required/>
 							</div>
-							<div class="gutter-bottom">
+							<div class="gutter-bottom" id="retypePasswordDiv">
 								<label class="clear required" for="EmailMemberRegistration_repassword">Retype Password</label>
-								<input tabindex="4" class="medium clear" autocomplete="off" data-tip-position="bottom" name="EmailMemberRegistration[repassword]" id="EmailMemberRegistration_repassword" type="password" maxlength="200" />
+								<input id="re_password" tabindex="4" class="medium clear" autocomplete="off" data-tip-position="bottom" name="EmailMemberRegistration[repassword]" id="EmailMemberRegistration_repassword" type="password" maxlength="200" required/>
 							</div>
 
 							<label class="clear gutter-bottom" for="member-type-slider">Account Type</label>
-							<div class="clearfix gutter-bottom member-type-container">
+							<div class="clearfix gutter-bottom member-type-container" id="accountTypeDiv">
 								<div class="col-xs-12 no-padding">
 									<input id="ytEmailMemberRegistration_memType" type="hidden" value="" name="EmailMemberRegistration[memType]" />
 									<span id="EmailMemberRegistration_memType">
 										<div class="col-xs-4 member-type-icon">
 											<span class="left">
-												<input class="member-type-radio pph-custom-input" tabindex="6" id="EmailMemberRegistration_memType_0" value="buyer" type="radio" name="EmailMemberRegistration[memType]" />
+												<input class="member-type-radio pph-custom-input" tabindex="6" id="EmailMemberRegistration_memType_0" value="buyer" type="radio" name="EmailMemberRegistration[memType]" onclick="$('#ytEmailMemberRegistration_memType').val($(this).val()); $('#accountTypeDiv_error_label').hide();"/>
 												<label for="EmailMemberRegistration_memType_0"><i class="fpph fpph-user-buyer"></i>BUYER</label>
 											</span>
 										</div>
 										<div class="col-xs-4 member-type-icon">
 											<span class="left">
-												<input class="member-type-radio pph-custom-input" tabindex="6" id="EmailMemberRegistration_memType_1" value="provider" type="radio" name="EmailMemberRegistration[memType]" />
+												<input class="member-type-radio pph-custom-input" tabindex="6" id="EmailMemberRegistration_memType_1" value="provider" type="radio" name="EmailMemberRegistration[memType]" onclick="$('#ytEmailMemberRegistration_memType').val($(this).val()); $('#accountTypeDiv_error_label').hide();" />
 												<label for="EmailMemberRegistration_memType_1"><i class="fpph fpph-user-seller"></i>SELLER</label>
 											</span>
 										</div>
 										<div class="col-xs-4 member-type-icon">
 											<span class="left">
-												<input class="member-type-radio pph-custom-input" tabindex="6" id="EmailMemberRegistration_memType_2" value="uninitialized" type="radio" name="EmailMemberRegistration[memType]" />
+												<input class="member-type-radio pph-custom-input" tabindex="6" id="EmailMemberRegistration_memType_2" value="uninitialized" type="radio" name="EmailMemberRegistration[memType]" onclick="$('#ytEmailMemberRegistration_memType').val($(this).val()); $('#accountTypeDiv_error_label').hide();" />
 												<label for="EmailMemberRegistration_memType_2"><i class="fpph fpph-user-dual"></i>BOTH</label>
 											</span>
 										</div>
@@ -98,8 +98,28 @@
 								</div>
 							</div>
 						</div>
-					</div>
-				</form>    
+					</form>
+                    <script>
+                        $('#signupFrom').validate({
+                            submitHandler: function(form) {
+                                var password = $('#password').val().trim();
+                                var re_password = $('#re_password').val().trim();
+                                if(password != re_password){
+                                    $('#retypePasswordDiv').append('<label id="retype_password_error_label" class="error" style="display: inline-block;">Retype password not match.</label>');
+                                    return;
+                                }
+                                if($('#ytEmailMemberRegistration_memType').val() == ''){
+                                    $('#accountTypeDiv').append('<label id="accountTypeDiv_error_label" class="error" style="display: inline-block;">Please select account type.</label>');
+                                    return;
+                                }
+                                form.submit();
+                            }
+                        });
+                        $('#re_password').keypress(function(e){
+                            $('#retype_password_error_label').hide();
+                        });
+                    </script>
+				</div>
 			</div>
 		</div>
     </div>

@@ -11,6 +11,7 @@
 /** Make sure that the WordPress bootstrap has run before continuing. */
 
 /// =========================================================================
+    /*
 $wp_hasher;
 if ( empty($wp_hasher) ) {
     require_once( 'D:/xampp/htdocs/vnup/wp-includes/class-phpass.php');
@@ -18,6 +19,7 @@ if ( empty($wp_hasher) ) {
     $wp_hasher = new PasswordHash(8, true);
 }
 echo $wp_hasher->HashPassword( trim( 'aaa' ) );
+    */
 
 /// ==========================================================================
 

@@ -52,7 +52,16 @@ class User extends CI_Controller
 
     //function process normal user login
     public function login(){
-        if(isset($_GET)){
+        if(isset($_POST['LoginForm'])){
+            $email = $_POST['LoginForm']['email'];
+            $pass = $_POST['LoginForm']['password'];
+            $isValid = $this->user_model->validate_login($email, $pass);
+            if($isValid){
+                echo "Dang nhap thanh cong";
+            }else{
+                echo "Sai username hoac password";
+            }
+        }else if(isset($_GET)){
             $this->form_validation->set_rules('LoginForm_email', 'Email', 'required');
             $this->form_validation->set_rules('text', 'text', 'required');
 
@@ -64,7 +73,7 @@ class User extends CI_Controller
                 $name = $graph->getName();
                 $email = $graph->getProperty('email');
                 $id = $graph->getId();
-                $image = 'https://graph.facebook.com/'. $id . '/picture?width=30';
+                $image = 'https://graph.facebook.com/'. $id . '/picture?width=100';
 
                 $args = array(
                     'name' => $name,
@@ -91,17 +100,6 @@ class User extends CI_Controller
             $this->load->view('user/tpl_login', $data);
             $this->load->view('common/tpl_footer');
 
-        }else if(isset($_POST['LoginForm'])){
-            $email = $_POST['LoginForm']['email'];
-            $pass = $_POST['LoginForm']['password'];
-            $isValid = $this->user_model->validate_login($email, $pass);
-            if($isValid){
-                echo "Dang nhap thanh cong";
-            }else{
-                echo "Sai username hoac password";
-            }
-        }else{
-            echo "tac vu khong hop le";
         }
     }
 

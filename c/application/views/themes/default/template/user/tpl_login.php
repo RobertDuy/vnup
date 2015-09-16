@@ -1,7 +1,3 @@
-name <?= $name; ?>
-email <?= $email; ?>
-image <?= $image; ?>
-
 <div class="container container-top"></div>
 	<div id="main-container" class="wrap-container container clearfix">
 		<div class="main-content full-width controller-site action-login">
@@ -13,8 +9,7 @@ image <?= $image; ?>
                     </aside>
 				</h1>
 				<div class="login-form-container">
-					<?php echo form_open('user/user'); ?>
-						
+					<form action="user/user" accept-charset="utf-8" method="post" id="loginPostForm">
 						<div class="fullPage loginDiv clearfix">
 							<div>
 								<div class="clearfix" data-hook="partial-social-buttons">
@@ -42,11 +37,11 @@ image <?= $image; ?>
 									<div class=" signin clearfix" >
 										<div class="gutter-bottom clearfix">
 											<label class="clear" for="LoginForm_email">Email</label>            
-											<input tabindex="1" class="medium clear login-signup-email" data-tip-position="bottom" name="LoginForm[email]" id="LoginForm_email" type="email" value="" />                    
+											<input tabindex="1" class="medium clear login-signup-email" data-tip-position="bottom" name="LoginForm[email]" id="LoginForm_email" type="email" value="" required/>
 										</div>
 										<div class="clearfix gutter-bottom">
 											<label class="clear" for="LoginForm_password">Password</label>            
-											<input tabindex="2" class="medium clear" autocomplete="off" data-tip-position="bottom" name="LoginForm[password]" id="LoginForm_password" type="password" />                    
+											<input tabindex="2" class="medium clear" autocomplete="off" data-tip-position="bottom" name="LoginForm[password]" id="LoginForm_password" type="password" required/>
 										</div>
 										<div class="clearfix gutter-bottom">
 											<div class="col-xs-6 no-padding text-right">
@@ -71,8 +66,11 @@ image <?= $image; ?>
 									</div>
 								</div>
 							</div>
-						</form>    
-					</div>
+						</div>
+                    </form>
+                    <script>
+                        $('#loginPostForm').validate();
+                    </script>
 				</div>
 			</div>
 		</div>
