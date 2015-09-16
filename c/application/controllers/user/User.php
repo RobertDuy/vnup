@@ -17,6 +17,8 @@ require_once(config_item('root_dir') . 'c/application/libraries/Facebook/HttpCli
 require_once(config_item('root_dir') . 'c/application/libraries/Facebook/HttpClients/FacebookHttpable.php');
 require_once(config_item('root_dir') . 'c/application/libraries/Facebook/HttpClients/FacebookCurlHttpClient.php');
 
+require_once( config_item('root_dir'). 'wp-includes/class-phpass.php');
+
 use Facebook\FacebookSession;
 use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookRequest;
@@ -32,6 +34,7 @@ class User extends CI_Controller
     private $app_secret = '2b4fd78d7d3acdfcfff6e50c064b8f37';
     private $default_redirectURL;
     private $helper;
+    private $wp_hasher;
 
     function __construct()
     {
@@ -44,6 +47,7 @@ class User extends CI_Controller
         $this->default_redirectURL = config_item('base_url') . 'user/user';
         FacebookSession::setDefaultApplication($this->app_id, $this->app_secret);
         $this->helper = new FacebookRedirectLoginHelper($this->default_redirectURL);
+        $this->wp_hasher = new PasswordHash(8, true);
     }
 
     public function index(){
@@ -80,11 +84,9 @@ class User extends CI_Controller
                     'email' => $email,
                     'image' => $image
                 );
-                // insert new customer
+                // todo:  goto verify account if email is missing then insert new customer
 
-                // set current user
-
-                // redirect to current page
+                // todo : redirect to current page
                 $this->session->set_userdata($args);
                 $data = $args;
                 $data['facebookLoginUrl'] = '#';
@@ -154,11 +156,21 @@ class User extends CI_Controller
             $this->load->view('user/tpl_signup', $data);
             $this->load->view('common/tpl_footer');
         }else if(isset($_POST['EmailMemberRegistration'])){
-            $fname = $_POST['EmailMemberRegistration']['fname'];
-            $lname = $_POST['EmailMemberRegistration']['lname'];
-            $email = $_POST['EmailMemberRegistration']['email'];
-            $password = $_POST['EmailMemberRegistration']['password'];
-            $memType = $_POST['EmailMemberRegistration']['memType'];
+            $data['fname'] = $_POST['EmailMemberRegistration']['fname'];
+            $data['lname'] = $_POST['EmailMemberRegistration']['lname'];
+            $data['user_email'] = $_POST['EmailMemberRegistration']['email'];
+            $data['password'] = $_POST['EmailMemberRegistration']['password'];
+            $data['memType'] = $_POST['EmailMemberRegistration']['memType'];
+
+            $data['user_login'] = $data['fname'] . '_' . $data['lname'];
+            $userObject = $this->user_model->get_user($data);
+            if(isset($userObject) && isset($userObject['ID'])){
+                echo 'This email is already existed';
+            }else{
+                $data['user_pass'] = $this->wp_hasher->HashPassword(trim($data['password']));
+                $this->user_model->insert_user($data);
+                // todo : insert successful redirect page
+            }
         }
     }
 
