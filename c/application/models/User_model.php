@@ -63,32 +63,22 @@ class User_model extends CI_Model {
     public function insert_user($data){
         if(isset($data['user_email']) && isset($data['user_login']) && isset($data['user_pass'])){
             $sql = "INSERT INTO wp_users SET
-                        user_login = '". $this->db->escape($data['user_login']) ."',
-                        user_email = '". $this->db->escape($data['user_email']) ."'
-                        user_pass = '". $this->db->escape($data['user_pass']) ."'";
+                        user_login = ". $this->db->escape($data['user_login']) .",
+                        user_email = ". $this->db->escape($data['user_email']) .",
+                        user_pass = ". $this->db->escape($data['user_pass']);
             if(isset($data['user_nicename']) && !empty($data['user_nicename'])){
-                $sql .= ",user_nicename = '". $this->db->escape($data['user_nicename']). "'";
+                $sql .= ",user_nicename = ". $this->db->escape($data['user_nicename']);
             }else{
-                $sql .= ",user_nicename = '". $this->db->escape($data['user_login']). "'";
-            }
-            if(isset($data['username']) && !empty($data['username'])){
-                $sql .= ",username = '". $this->db->escape($data['username']). "'";
-            }else{
-                $sql .= ",username = '". $this->db->escape($data['user_login']). "'";
-            }
-            if(isset($data['nickname']) && !empty($data['nickname'])){
-                $sql .= ",nickname = '". $this->db->escape($data['nickname']). "'";
-            }else{
-                $sql .= ",nickname = '". $this->db->escape($data['user_login']). "'";
+                $sql .= ",user_nicename = ". $this->db->escape($data['user_login']);
             }
             if(isset($data['display_name']) && !empty($data['display_name'])){
-                $sql .= ",display_name = '". $this->db->escape($data['display_name']). "'";
+                $sql .= ",display_name = ". $this->db->escape($data['display_name']);
             }else{
-                $sql .= ",display_name = '". $this->db->escape($data['user_login']). "'";
+                $sql .= ",display_name = ". $this->db->escape($data['user_login']);
             }
             try{
                 $this->db->query($sql);
-                return $this->db->getLastId();
+                return $this->db->insert_id();
             }catch(Exception $e){
                 echo $e->getMessage();
             }

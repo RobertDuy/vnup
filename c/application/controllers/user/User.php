@@ -84,12 +84,21 @@ class User extends CI_Controller
                     'email' => $email,
                     'image' => $image
                 );
-                // todo:  goto verify account if email is missing then insert new customer
-
-                // todo : redirect to current page
-                $this->session->set_userdata($args);
                 $data = $args;
+                $data['user_login'] = $args['name'];
+                $data['user_email'] = ($args['email'] != null && !empty($args['email']))? $args['email'] : $id. '@facebook.com';
+                $data['user_image'] = $args['image'];
+                $data['user_pass'] = '123';
+                $userObject = $this->user_model->get_user($data);
+                if($userObject == null){
+                    $this->user_model->insert_user($data);
+                }
+                // update user session data
+                $this->session->set_userdata($args);;
+                // TODO: redirect to current page
                 $data['facebookLoginUrl'] = '#';
+
+                echo 'login bang facebook thanh cong';
             }else{
                 $data['facebookLoginUrl'] = $this->helper->getLoginUrl();
             }
@@ -106,14 +115,30 @@ class User extends CI_Controller
     }
 
     //function process linkedin  user login
-    public function ilogin()
-    {
+    public function ilogin(){
         $this->load->view('welcome_message');
     }
 
     //function process normal user registration
     public function signup(){
-        if(isset($_GET)){
+        if(isset($_POST['EmailMemberRegistration'])){
+            $data['fname'] = $_POST['EmailMemberRegistration']['fname'];
+            $data['lname'] = $_POST['EmailMemberRegistration']['lname'];
+            $data['user_email'] = $_POST['EmailMemberRegistration']['email'];
+            $data['password'] = $_POST['EmailMemberRegistration']['password'];
+            $data['memType'] = $_POST['EmailMemberRegistration']['memType'];
+
+            $data['user_login'] = $data['fname'] . '_' . $data['lname'];
+            $userObject = $this->user_model->get_user($data);
+            if(isset($userObject) && isset($userObject['ID'])){
+                echo 'This email is already existed';
+            }else{
+                $data['user_pass'] = $this->wp_hasher->HashPassword(trim($data['password']));
+                $this->user_model->insert_user($data);
+                echo 'Sign up successful . This page will be redirect in a second.';
+                // todo : insert successful redirect page
+            }
+        }else if(isset($_GET)){
             $this->form_validation->set_rules('EmailMemberRegistration_fname', 'text', 'required');
             $this->form_validation->set_rules('EmailMemberRegistration_lname', 'text', 'required');
             $this->form_validation->set_rules('EmailMemberRegistration_email', 'email', 'required');
@@ -129,20 +154,27 @@ class User extends CI_Controller
                 $email = $graph->getProperty('email');
                 $id = $graph->getId();
                 $image = 'https://graph.facebook.com/'. $id . '/picture?width=30';
-
                 $args = array(
                     'name' => $name,
                     'email' => $email,
                     'image' => $image
                 );
-                // insert new customer
-
-                // set current user
-
-                // redirect to current page
-                $this->session->set_userdata($args);
+                // insert new user into database
                 $data = $args;
+                $data['user_login'] = $args['name'];
+                $data['user_email'] = ($args['email'] != null && !empty($args['email']))? $args['email'] : $id. '@facebook.com';
+                $data['user_image'] = $args['image'];
+                $data['user_pass'] = '123';
+                $userObject = $this->user_model->get_user($data);
+                if($userObject == null){
+                    $this->user_model->insert_user($data);
+                }
+                // update user session data
+                $this->session->set_userdata($args);
                 $data['loginFacebookLink'] = '#';
+                // TODO: redirect to current page
+
+                echo 'Login via facebook successful';
             }else{
                 $data['loginFacebookLink'] = $this->helper->getLoginUrl();
             }
@@ -155,55 +187,32 @@ class User extends CI_Controller
             $this->load->view('common/tpl_header');
             $this->load->view('user/tpl_signup', $data);
             $this->load->view('common/tpl_footer');
-        }else if(isset($_POST['EmailMemberRegistration'])){
-            $data['fname'] = $_POST['EmailMemberRegistration']['fname'];
-            $data['lname'] = $_POST['EmailMemberRegistration']['lname'];
-            $data['user_email'] = $_POST['EmailMemberRegistration']['email'];
-            $data['password'] = $_POST['EmailMemberRegistration']['password'];
-            $data['memType'] = $_POST['EmailMemberRegistration']['memType'];
-
-            $data['user_login'] = $data['fname'] . '_' . $data['lname'];
-            $userObject = $this->user_model->get_user($data);
-            if(isset($userObject) && isset($userObject['ID'])){
-                echo 'This email is already existed';
-            }else{
-                $data['user_pass'] = $this->wp_hasher->HashPassword(trim($data['password']));
-                $this->user_model->insert_user($data);
-                // todo : insert successful redirect page
-            }
         }
     }
 
     //function process facebook user registration
-    public function fregister()
-    {
+    public function fregister(){
         $this->load->view('welcome_message');
-
     }
 
     //function process linkedin user registration
-    public function iregister()
-    {
+    public function iregister(){
         $this->load->view('welcome_message');
-
     }
 
     //function process user activation
-    public function activate()
-    {
+    public function activate(){
         $this->load->view('user/tpl_activate');
 
     }
 
     //function process user activation
-    public function user_exist()
-    {
+    public function user_exist(){
 
     }
 
     //function send mail to user
-    public function sendmail()
-    {
+    public function sendmail(){
 
 
     }
