@@ -20,7 +20,7 @@
 											</a>
 										</div>                
 										<div class="col-xs-12 col-sm-6 social-right">
-											<a class="action-social-login medium button social-button linkedin last login-li-link" rel="nofollow" href="#">
+											<a class="action-social-login medium button social-button linkedin last login-li-link" rel="nofollow" href="<?= $loginViaLinkin; ?>">
 												<i class="fa fa-linkedin"></i><span>Log In with LinkedIn</span>
 											</a>
 										</div>                

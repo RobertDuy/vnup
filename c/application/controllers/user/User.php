@@ -18,6 +18,7 @@ require_once(config_item('root_dir') . 'c/application/libraries/Facebook/HttpCli
 require_once(config_item('root_dir') . 'c/application/libraries/Facebook/HttpClients/FacebookCurlHttpClient.php');
 
 require_once( config_item('root_dir'). 'wp-includes/class-phpass.php');
+require_once(config_item('root_dir'). 'c/application/utils/HttpCallUtils.php');
 
 use Facebook\FacebookSession;
 use Facebook\FacebookRedirectLoginHelper;
@@ -32,6 +33,9 @@ class User extends CI_Controller
 
     private $app_id = '651313361641726';
     private $app_secret = '2b4fd78d7d3acdfcfff6e50c064b8f37';
+    private $inClientId = '75c18x2d1j1vcr';
+    private $inClientSecret = '249hzZ8HKnm5fOtL';
+
     private $default_redirectURL;
     private $helper;
     private $wp_hasher;
@@ -91,10 +95,16 @@ class User extends CI_Controller
                 $data['user_pass'] = '123';
                 $userObject = $this->user_model->get_user($data);
                 if($userObject == null){
-                    $this->user_model->insert_user($data);
+                    $userID = $this->user_model->insert_user($data);
+                }else{
+                    $userID = $this->user_model->update_user($data);
                 }
-                // update user session data
-                $this->session->set_userdata($args);;
+                // UPDATE USER SESSION DATA
+                $userSessionData['user_email'] = $data['user_email'];
+                $userSessionData['user_login'] = $data['user_login'];
+                $userSessionData['user_id'] = $userID;
+
+                $this->session->set_userdata($userSessionData);
                 // TODO: redirect to current page
                 $data['facebookLoginUrl'] = '#';
 
@@ -106,17 +116,61 @@ class User extends CI_Controller
             $data['name'] = $this->session->userdata('name');
             $data['email'] = $this->session->userdata('email');
             $data['image'] = $this->session->userdata('image');
+            $data['loginViaLinkin'] = 'https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id='. $this->inClientId . '&redirect_uri=http://localhost/vnup/c/user/user/ilogin&state=DCEeFWf45A53sdfKef42afda4&scope=r_basicprofile%20r_emailaddress';
 
             $this->load->view('common/tpl_header');
             $this->load->view('user/tpl_login', $data);
             $this->load->view('common/tpl_footer');
-
         }
     }
 
-    //function process linkedin  user login
     public function ilogin(){
-        $this->load->view('welcome_message');
+        $url_POST = 'https://www.linkedin.com/uas/oauth2/accessToken';
+        if(isset($_GET['code']) && isset($_GET['state'])){  // step 2
+            // handle response code from linked in
+
+            $code = $_GET['code'];
+            $fields = array(
+                'code' => $code,
+                'grant_type' => urlencode('authorization_code'),
+                'redirect_uri' => urlencode('http://localhost/vnup/c/user/user/ilogin'),
+                'client_id' => urlencode($this->inClientId),
+                'client_secret' => urlencode($this->inClientSecret)
+            );
+            $response = HttpCallUtils::makeHttpCall($url_POST, $fields, 'POST', null);
+            $accessTokenObject = json_decode($response, true); // array data
+
+            $user = HttpCallUtils::fetchBasicProfile($accessTokenObject['access_token']);
+            // TODO : store access token to user , store expier , check and refresh token if needed
+
+            $data['user_login'] = substr($user['emailAddress'], 0, strpos($user['emailAddress'], '@'));
+            $data['user_email'] = $user['emailAddress'];
+            $data['user_image'] = (isset($user['pictureUrl']))? $user['pictureUrl'] : 'default_user.png';
+            $data['user_pass'] = '123';
+            $data['first_name'] = $user['firstName'];
+            $data['last_name'] = $user['lastName'];
+            $data['in_access_token'] = $accessTokenObject['access_token'];
+            $data['in_token_expire'] = $accessTokenObject['expires_in'];
+
+            $userObject = $this->user_model->get_user($data);
+            if($userObject == null){
+                $id = $this->user_model->insert_user($data);
+            }else if($userObject['ID'] > 0){
+                $id = $this->user_model->update_user($data);
+            }
+
+            // UPDATE SESSION USER DATA
+            $userSessionData = array();
+            $userSessionData['user_email'] = $data['user_email'];
+            $userSessionData['user_login'] = $data['user_login'];
+            $userSessionData['user_first_name'] = $data['first_name'];
+            $userSessionData['user_last_name'] = $data['last_name'];
+            $userSessionData['user_id'] = $id;
+            $this->session->set_userdata($userSessionData);
+
+            // REDIRECT TO CURRENT PAGE
+
+        }
     }
 
     //function process normal user registration
@@ -190,24 +244,9 @@ class User extends CI_Controller
         }
     }
 
-    //function process facebook user registration
-    public function fregister(){
-        $this->load->view('welcome_message');
-    }
-
-    //function process linkedin user registration
-    public function iregister(){
-        $this->load->view('welcome_message');
-    }
-
     //function process user activation
     public function activate(){
         $this->load->view('user/tpl_activate');
-
-    }
-
-    //function process user activation
-    public function user_exist(){
 
     }
 

@@ -76,6 +76,22 @@ class User_model extends CI_Model {
             }else{
                 $sql .= ",display_name = ". $this->db->escape($data['user_login']);
             }
+            //first name
+            if(isset($data['first_name'])){
+                $sql .= ", first_name = ". $this->db->escape($data['first_name']);
+            }
+            //last_name
+            if(isset($data['last_name'])){
+                $sql .= ", last_name = ". $this->db->escape($data['last_name']);
+            }
+            //in_access_token
+            if(isset($data['in_access_token'])){
+                $sql .= ", in_access_token = ". $this->db->escape($data['in_access_token']);
+            }
+            //in_token_expire
+            if(isset($data['in_token_expire'])){
+                $sql .= ", in_token_expire = ". $this->db->escape($data['in_token_expire']);
+            }
             try{
                 $this->db->query($sql);
                 return $this->db->insert_id();
@@ -110,6 +126,22 @@ class User_model extends CI_Model {
                 $sql .= ",display_name = '". $this->db->escape($data['display_name']). "'";
             }else{
                 $sql .= ",display_name = '". $this->db->escape($data['user_login']). "'";
+            }
+            //first name
+            if(isset($data['first_name'])){
+                $sql .= ", first_name = ". $this->db->escape($data['first_name']);
+            }
+            //last_name
+            if(isset($data['last_name'])){
+                $sql .= ", last_name = ". $this->db->escape($data['last_name']);
+            }
+            //in_access_token
+            if(isset($data['in_access_token'])){
+                $sql .= ", in_access_token = ". $this->db->escape($data['in_access_token']);
+            }
+            //in_token_expire
+            if(isset($data['in_token_expire'])){
+                $sql .= ", in_token_expire = ". $this->db->escape($data['in_token_expire']);
             }
             try{
                 $this->db->query($sql);
