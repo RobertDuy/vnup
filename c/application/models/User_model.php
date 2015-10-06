@@ -92,6 +92,10 @@ class User_model extends CI_Model {
             if(isset($data['in_token_expire'])){
                 $sql .= ", in_token_expire = ". $this->db->escape($data['in_token_expire']);
             }
+            // user_activation_key
+            if(isset($data['user_activation_key'])){
+                $sql .= ", user_activation_key = ". $this->db->escape($data['user_activation_key']);
+            }
             try{
                 $this->db->query($sql);
                 return $this->db->insert_id();
@@ -102,30 +106,20 @@ class User_model extends CI_Model {
     }
 
     public function update_user($data){
-        if(isset($data['user_email']) && isset($data['user_login']) && isset($data['user_pass'])){
+        if(isset($data['user_email']) && isset($data['user_login']) && isset($data['user_pass']) && isset($data['ID'])){
             $sql = "UPDATE wp_users SET
-                        user_login = '". $this->db->escape($data['user_login']) ."',
-                        user_email = '". $this->db->escape($data['user_email']) ."'
-                        user_pass = '". $this->db->escape($data['user_pass']) ."'";
+                        user_login = ". $this->db->escape($data['user_login']) .",
+                        user_email = ". $this->db->escape($data['user_email']) .",
+                        user_pass = ". $this->db->escape($data['user_pass']);
             if(isset($data['user_nicename']) && !empty($data['user_nicename'])){
-                $sql .= ",user_nicename = '". $this->db->escape($data['user_nicename']). "'";
+                $sql .= ",user_nicename = ". $this->db->escape($data['user_nicename']);
             }else{
-                $sql .= ",user_nicename = '". $this->db->escape($data['user_login']). "'";
-            }
-            if(isset($data['username']) && !empty($data['username'])){
-                $sql .= ",username = '". $this->db->escape($data['username']). "'";
-            }else{
-                $sql .= ",username = '". $this->db->escape($data['user_login']). "'";
-            }
-            if(isset($data['nickname']) && !empty($data['nickname'])){
-                $sql .= ",nickname = '". $this->db->escape($data['nickname']). "'";
-            }else{
-                $sql .= ",nickname = '". $this->db->escape($data['user_login']). "'";
+                $sql .= ",user_nicename = ". $this->db->escape($data['user_login']);
             }
             if(isset($data['display_name']) && !empty($data['display_name'])){
-                $sql .= ",display_name = '". $this->db->escape($data['display_name']). "'";
+                $sql .= ",display_name = ". $this->db->escape($data['display_name']);
             }else{
-                $sql .= ",display_name = '". $this->db->escape($data['user_login']). "'";
+                $sql .= ",display_name = ". $this->db->escape($data['user_login']);
             }
             //first name
             if(isset($data['first_name'])){
@@ -143,12 +137,20 @@ class User_model extends CI_Model {
             if(isset($data['in_token_expire'])){
                 $sql .= ", in_token_expire = ". $this->db->escape($data['in_token_expire']);
             }
+            //user_activation_key
+            if(isset($data['user_activation_key'])){
+                $sql .= ", user_activation_key = ". $this->db->escape($data['user_activation_key']);
+            }
+
+            $sql .= " WHERE ID = ". (int)$data['ID'];
             try{
                 $this->db->query($sql);
-                return $this->db->getLastId();
+                return $data['ID'];
             }catch(Exception $e){
                 echo $e->getMessage();
             }
+        }else{
+            return null;
         }
     }
 
@@ -162,5 +164,15 @@ class User_model extends CI_Model {
             }
         }
         return false;
+    }
+
+    public function getuser_by_activate_code($activate_code){
+        $sql = "SELECT * FROM wp_users WHERE user_activation_key = ". $this->db->escape($activate_code);
+        $query = $this->db->query($sql);
+        if($query->num_rows() == 1){
+            return $query->result_array()[0];
+        }else{
+            return null;
+        }
     }
 }

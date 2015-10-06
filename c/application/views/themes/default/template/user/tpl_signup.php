@@ -10,7 +10,7 @@
                     </aside>
 				</h1>
 				<div class="signup-form-container">
-                    <form accept-charset="utf-8" method="post" action="user/user/signup" id="signupFrom">
+                    <form accept-charset="utf-8" method="post" action="signup" id="signupFrom">
 						<div style="display:none"><input type="hidden" value="bdb0edf80e269d336ddf931b18a86545ad676c5d" name="YII_CSRF_TOKEN" /></div>
 						<div class="fullPage signupDiv clearfix">
 						<div class="clearfix gutter-bottom" data-hook="partial-social-buttons">
