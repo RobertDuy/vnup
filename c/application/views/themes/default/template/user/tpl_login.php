@@ -9,7 +9,7 @@
                     </aside>
 				</h1>
 				<div class="login-form-container">
-					<form action="user/user" accept-charset="utf-8" method="post" id="loginPostForm">
+					<form action="user" accept-charset="utf-8" method="post" id="loginPostForm">
 						<div class="fullPage loginDiv clearfix">
 							<div>
 								<div class="clearfix" data-hook="partial-social-buttons">

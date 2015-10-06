@@ -39,13 +39,14 @@ class User extends CI_Controller
     private $default_redirectURL;
     private $helper;
     private $wp_hasher;
+    private $callbackInLink = 'http://localhost/vnup/c/user/user/ilogin';
 
-    function __construct()
-    {
+    function __construct(){
         parent::__construct();
         $this->load->helper('form');
         $this->load->library('form_validation');
         $this->load->library('session');
+        $this->load->helper('url');
         $this->load->model('user_model');
 
         $this->default_redirectURL = config_item('base_url') . 'user/user';
@@ -55,6 +56,10 @@ class User extends CI_Controller
     }
 
     public function index(){
+        if(isset($_GET['redirect_to'])){
+            $_SESSION['redirect_to'] = $_GET['redirect_to'];
+        }
+
         $this->login();
     }
 
@@ -65,7 +70,11 @@ class User extends CI_Controller
             $pass = $_POST['LoginForm']['password'];
             $isValid = $this->user_model->validate_login($email, $pass);
             if($isValid){
-                echo "Dang nhap thanh cong";
+               if(isset($_SESSION['redirect_to'])){
+                   redirect($_SESSION['redirect_to']);
+               }else{
+                   echo 'login successfully! BUT missing redirect link to url';
+               }
             }else{
                 echo "Sai username hoac password";
             }
@@ -103,20 +112,18 @@ class User extends CI_Controller
                 $userSessionData['user_email'] = $data['user_email'];
                 $userSessionData['user_login'] = $data['user_login'];
                 $userSessionData['user_id'] = $userID;
+                $userSessionData['user_image'] = $image;
 
                 $this->session->set_userdata($userSessionData);
-                // TODO: redirect to current page
-                $data['facebookLoginUrl'] = '#';
-
-                echo 'login bang facebook thanh cong';
+                redirect($_SESSION['redirect_to']);
             }else{
                 $data['facebookLoginUrl'] = $this->helper->getLoginUrl();
             }
 
-            $data['name'] = $this->session->userdata('name');
-            $data['email'] = $this->session->userdata('email');
-            $data['image'] = $this->session->userdata('image');
-            $data['loginViaLinkin'] = 'https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id='. $this->inClientId . '&redirect_uri=http://localhost/vnup/c/user/user/ilogin&state=DCEeFWf45A53sdfKef42afda4&scope=r_basicprofile%20r_emailaddress';
+            $data['name'] = $this->session->userdata('user_email');
+            $data['email'] = $this->session->userdata('user_login');
+            $data['image'] = $this->session->userdata('user_image');
+            $data['loginViaLinkin'] = 'https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id='. $this->inClientId . '&redirect_uri='. $this->callbackInLink .'&state=DCEeFWf45A53sdfKef42afda4&scope=r_basicprofile%20r_emailaddress';
 
             $this->load->view('common/tpl_header');
             $this->load->view('user/tpl_login', $data);
@@ -141,14 +148,12 @@ class User extends CI_Controller
             $accessTokenObject = json_decode($response, true); // array data
 
             $user = HttpCallUtils::fetchBasicProfile($accessTokenObject['access_token']);
-            // TODO : store access token to user , store expier , check and refresh token if needed
-
-            $data['user_login'] = substr($user['emailAddress'], 0, strpos($user['emailAddress'], '@'));
-            $data['user_email'] = $user['emailAddress'];
-            $data['user_image'] = (isset($user['pictureUrl']))? $user['pictureUrl'] : 'default_user.png';
-            $data['user_pass'] = '123';
-            $data['first_name'] = $user['firstName'];
-            $data['last_name'] = $user['lastName'];
+            $data['user_login'] = substr($user->emailAddress, 0, strpos($user->emailAddress, '@'));
+            $data['user_email'] = $user->emailAddress;
+            $data['user_image'] = (isset($user->pictureUrl))? $user->pictureUrl : 'default_user.png';
+            $data['user_pass'] = $this->wp_hasher->HashPassword('12345');
+            $data['first_name'] = $user->firstName;
+            $data['last_name'] = $user->lastName;
             $data['in_access_token'] = $accessTokenObject['access_token'];
             $data['in_token_expire'] = $accessTokenObject['expires_in'];
 
@@ -169,7 +174,7 @@ class User extends CI_Controller
             $this->session->set_userdata($userSessionData);
 
             // REDIRECT TO CURRENT PAGE
-
+            redirect($_SESSION['redirect_to']);
         }
     }
 
@@ -218,7 +223,7 @@ class User extends CI_Controller
                 $data['user_login'] = $args['name'];
                 $data['user_email'] = ($args['email'] != null && !empty($args['email']))? $args['email'] : $id. '@facebook.com';
                 $data['user_image'] = $args['image'];
-                $data['user_pass'] = '123';
+                $data['user_pass'] = $this->wp_hasher->HashPassword('12345');
                 $userObject = $this->user_model->get_user($data);
                 if($userObject == null){
                     $this->user_model->insert_user($data);
@@ -226,9 +231,11 @@ class User extends CI_Controller
                 // update user session data
                 $this->session->set_userdata($args);
                 $data['loginFacebookLink'] = '#';
-                // TODO: redirect to current page
-
-                echo 'Login via facebook successful';
+                if(isset($_GET['redirect_to'])){
+                    redirect($_GET['redirect_to']);
+                }else{
+                    echo 'Login via facebook successful! But missing redirect link to url';
+                }
             }else{
                 $data['loginFacebookLink'] = $this->helper->getLoginUrl();
             }
@@ -236,7 +243,7 @@ class User extends CI_Controller
             $data['name'] = $this->session->userdata('name');
             $data['email'] = $this->session->userdata('email');
             $data['image'] = $this->session->userdata('image');
-            $data['loginLinkedInLink'] = '';
+            $data['loginViaLinkin'] = 'https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id='. $this->inClientId . '&redirect_uri='. $this->callbackInLink .'&state=DCEeFWf45A53sdfKef42afda4&scope=r_basicprofile%20r_emailaddress';
 
             $this->load->view('common/tpl_header');
             $this->load->view('user/tpl_signup', $data);

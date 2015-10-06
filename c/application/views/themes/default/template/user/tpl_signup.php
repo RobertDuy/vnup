@@ -21,7 +21,7 @@
 									</a>
 								</div>
 								<div class="col-xs-12 col-sm-6 clearfix social-right">
-									<a class="action-social-login medium button social-button linkedin" href="<?= $loginLinkedInLink; ?>">
+									<a class="action-social-login medium button social-button linkedin" href="<?= $loginViaLinkin; ?>">
 										<i class="fa fa-linkedin"></i><span>Sign up with LinkedIn</span>
 									</a>
 								</div>

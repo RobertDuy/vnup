@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,300,700,800' rel='stylesheet' type='text/css'>
         <meta name="robots" content="noindex" />        
-		<link rel="stylesheet" type="text/css" href="http://localhost/vnup/c/assets/themes/default/css/css-white-lion.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo config_item('base_url');?>assets/themes/default/css/css-white-lion.css" />
         
 		<title>Member Login</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
