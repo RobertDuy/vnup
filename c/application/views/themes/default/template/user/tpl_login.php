@@ -1,3 +1,5 @@
+<?php var_dump($_SESSION)?>
+
 <div class="container container-top"></div>
 	<div id="main-container" class="wrap-container container clearfix">
 		<div class="main-content full-width controller-site action-login">

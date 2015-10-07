@@ -51,6 +51,7 @@ class User extends CI_Controller
         $this->load->library('session');
         $this->load->library('email');
         $this->load->helper('url');
+        $this->load->helper('cookie');
         $this->load->model('user_model');
 
         // setting up email ===============================================
@@ -79,7 +80,20 @@ class User extends CI_Controller
         if(isset($_GET['redirect_to'])){
             $_SESSION['redirect_to'] = $_GET['redirect_to'];
         }
-
+        //test code
+        $userdata = array(
+            'name' => 'test cookie',
+            'email' => 'test@test.com'
+        );
+        $cookie = array(
+            'name'   => 'user',
+            'value'  => json_encode($userdata),
+            'expire' => 120,
+            'domain' => '.localhost',
+            'path'   => '/',
+            'prefix' => 'vnup_',
+        );
+        set_cookie($cookie);
         $this->login();
     }
 
@@ -140,7 +154,11 @@ class User extends CI_Controller
                 $userSessionData['user_image'] = $image;
 
                 $this->session->set_userdata($userSessionData);
-                redirect($_SESSION['redirect_to']);
+                if($_GET['redirect_to']){
+                    redirect($_SESSION['redirect_to']);
+                }else{
+                    redirect($this->homepage);
+                }
             }else{
                 $data['facebookLoginUrl'] = $this->helper->getLoginUrl();
             }
