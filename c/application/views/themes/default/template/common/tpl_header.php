@@ -26,18 +26,6 @@
                 color: red;
             }
         </style>
-
-        <script type="text/javascript" src="//platform.linkedin.com/in.js">
-            api_key:   4632931
-            onLoad:    afterLoad
-            authorize: true
-            lang:      en_US
-        </script>
-        <script>
-            function afterLoad(){
-                alert('after load linkedin Init!!!');
-            }
-        </script>
     </head>
 
     <body class="responsive">

@@ -40,19 +40,23 @@ class User_model extends CI_Model {
     /**
      * @param $email
      * @param $pass
-     * @return bool  true or false
+     * @return 0 = false, > 0 = true
      */
     public function validate_login($email, $pass){
         if(empty($email) || empty($pass)){
-            return false;
+            return 0;
         }
         $user = $this->get_user(array('user_email' => $email));
         if(!empty($user) || isset($user['ID'])){
             $dataPass = $user['user_pass'];  // MD 5
             $isValid = $this->wp_hasher->CheckPassword($pass, $dataPass);
-            return $isValid;
+            if($isValid){
+                return $user['ID'];
+            }else{
+                return 0;
+            }
         }
-        return false;
+        return 0;
     }
 
     /**

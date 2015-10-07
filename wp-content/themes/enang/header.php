@@ -59,6 +59,18 @@
 }(document, 'script', 'facebook-jssdk'));</script>
   <!--Fix Navigation Bar with drop down menu -->
     <header>
+        <?php
+               //TODO : handle login here
+            if(isset($_SESSION['user_data'])){
+                // NEU CO' ROI THI CHI VIEC LAY RA SHOW
+            }else if(isset($_COOKIE['vnup_user'])){
+                if(json_decode($_COOKIE['vnup_user'])->remember_me == 'TRUE'){
+                    // TODO : query DB to get user data
+
+                    // TODO : show & set to session['user_data']
+                }
+            }
+        ?>
 		<div class="navcontain navbar navbar-default cus_nav">
 			<div class="container"> <?php  $cat_ID = get_query_var('cat'); $url = esc_url(get_category_link($cat_ID)) ; ?>
             

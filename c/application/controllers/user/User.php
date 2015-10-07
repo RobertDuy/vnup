@@ -53,6 +53,7 @@ class User extends CI_Controller
         $this->load->helper('url');
         $this->load->helper('cookie');
         $this->load->model('user_model');
+        $this->load->model('user_cookie_model');
 
         // setting up email ===============================================
         $config['useragent'] = "Codeigniter";
@@ -80,20 +81,6 @@ class User extends CI_Controller
         if(isset($_GET['redirect_to'])){
             $_SESSION['redirect_to'] = $_GET['redirect_to'];
         }
-        //test code
-        $userdata = array(
-            'name' => 'test cookie',
-            'email' => 'test@test.com'
-        );
-        $cookie = array(
-            'name'   => 'user',
-            'value'  => json_encode($userdata),
-            'expire' => 120,
-            'domain' => '.localhost',
-            'path'   => '/',
-            'prefix' => 'vnup_',
-        );
-        set_cookie($cookie);
         $this->login();
     }
 
@@ -102,9 +89,13 @@ class User extends CI_Controller
         if(isset($_POST['LoginForm'])){
             $email = $_POST['LoginForm']['email'];
             $pass = $_POST['LoginForm']['password'];
-            $isValid = $this->user_model->validate_login($email, $pass);
-            if($isValid){
+            $remember_me = $_POST['LoginForm']['remember_me'];
+            $userID = $this->user_model->validate_login($email, $pass);
+            if($userID > 0){ // > 0 is valid
                if(isset($_SESSION['redirect_to'])){
+
+                   // HANDLE COOKIE DATA
+                   $this->handleCookie($userID, $remember_me);
                    redirect($_SESSION['redirect_to']);
                }else{
                    echo 'login successfully! BUT missing redirect link to url';
@@ -154,6 +145,11 @@ class User extends CI_Controller
                 $userSessionData['user_image'] = $image;
 
                 $this->session->set_userdata($userSessionData);
+
+
+                // HANDLE COOKIE DATA
+                $this->handleCookie($userID, false);
+
                 if($_GET['redirect_to']){
                     redirect($_SESSION['redirect_to']);
                 }else{
@@ -221,6 +217,9 @@ class User extends CI_Controller
             $userSessionData['user_id'] = $id;
             $this->session->set_userdata($userSessionData);
 
+            // HANDLE COOKIE DATA
+            $this->handleCookie($id, false);
+
             // REDIRECT TO CURRENT PAGE
             redirect($_SESSION['redirect_to']);
         }
@@ -234,6 +233,7 @@ class User extends CI_Controller
             $data['user_email'] = $_POST['EmailMemberRegistration']['email'];
             $data['password'] = $_POST['EmailMemberRegistration']['password'];
             $data['memType'] = $_POST['EmailMemberRegistration']['memType'];
+            $data['remember_me'] = $_POST['EmailMemberRegistration']['remember_me'];
 
             $data['user_login'] = $data['fname'] . '_' . $data['lname'];
             $userObject = $this->user_model->get_user($data);
@@ -242,7 +242,7 @@ class User extends CI_Controller
             }else{
                 $data['user_pass'] = $this->wp_hasher->HashPassword(trim($data['password']));
                 $data['user_activation_key'] = sha1(mt_rand(10000,99999).time(). $data['user_email']);
-                $this->user_model->insert_user($data);
+                $userID = $this->user_model->insert_user($data);
 
                 $activateCode = $data['user_activation_key'];
                 // send email
@@ -250,6 +250,9 @@ class User extends CI_Controller
                    'homepage' => $this->homepage,
                     'activateLink' => $this->activateLink .'?activate_code='. $activateCode
                 ));
+
+                // HANDLE COOKIE DATA
+                $this->handleCookie($userID, $data['remember_me']);
 
                 // redirect to current URL
                 echo 'Sign up successful . This page will be redirect in a second.';
@@ -339,12 +342,15 @@ class User extends CI_Controller
                 $userSessionData['user_last_name'] = $user['last_name'];
                 $userSessionData['user_id'] = $user['ID'];
                 $this->session->set_userdata($userSessionData);
+
+                $this->handleCookie($user['ID'], json_decode($this->input->cookie('vnup_user'))->remember_me);
+
                 echo 'Your account is activated! This page will redirect in seconds';
                 flush();
                 sleep(3);
                 
                 // redirect to ...
-                redirect('http://localhost/vnup');
+                redirect($this->homepage);
             }
         }
     }
@@ -366,5 +372,32 @@ class User extends CI_Controller
         $this->email->subject($subject);
         $this->email->message($messageBody);
         $this->email->send();
+    }
+
+    function setUserDataToCookie($data){
+        $cookie = array(
+            'name'   => 'user',
+            'value'  => json_encode($data),
+            'expire' => time()+ 85200,
+            'domain' => '.localhost',
+            'path'   => '/',
+            'prefix' => 'vnup_',
+        );
+        set_cookie($cookie);
+    }
+
+    function handleCookie($userID, $remember_me){
+        // UPDATE TO DB USER COOKIE DATA
+        $userToken = sha1(mt_rand(10000,99999).time(). $userID);
+        $dataInsertCookie['user_token'] = $userToken;
+        $dataInsertCookie['user_ip'] = $this->input->ip_address();
+        $dataInsertCookie['user_agent'] = $this->input->user_agent();
+        $dataInsertCookie['ID'] = $userID;
+        $this->user_cookie_model->insert($dataInsertCookie);
+
+        // SET TO COOKIE DATA
+        $userCookieData['user_token'] = $userToken;
+        $userCookieData['remember_me'] = $remember_me;
+        $this->setUserDataToCookie($userCookieData);
     }
 }
