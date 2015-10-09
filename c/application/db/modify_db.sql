@@ -7,8 +7,9 @@ ALTER TABLE `wp_users` ADD (
 
 CREATE TABLE IF NOT EXISTS `wp_user_cookie` (
   `user_cookie_id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_token` int(11),
+  `user_token` varchar(100),
   `user_ip` varchar(100),
+  `user_mac` varchar(100),
   `user_agent` varchar(100),
   `ID` int(11) NOT NULL,
   PRIMARY KEY (`user_cookie_id`)

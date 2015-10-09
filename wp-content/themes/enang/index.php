@@ -11,9 +11,6 @@
 <?php get_header();?>
 
 <div id="main">
-		<?php
-             var_dump($_SESSION);
-        ?>
 		<div id="mainNews" class="container">
 			<div id="containerTopRow" class="row">
 				<div id="homecenterNews"  class="centerNews col-sm-9 col-md-7 col-lg-7" >

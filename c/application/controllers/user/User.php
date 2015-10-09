@@ -81,6 +81,36 @@ class User extends CI_Controller
         if(isset($_GET['redirect_to'])){
             $_SESSION['redirect_to'] = $_GET['redirect_to'];
         }
+        // HANDLE LOGIN USER && INIT SESSION && REDIRECT
+        if($_COOKIE['vnup_user']){
+            $cookieVnupUser = $_COOKIE['vnup_user'];
+            $index1 = strrpos($cookieVnupUser, 'user_token') + strlen('user_token') + 5;
+            $index2 = strrpos($cookieVnupUser, 'remember_me') - 5;
+            $index3 = strrpos($cookieVnupUser, 'remember_me') + strlen('remember_me') + 5;
+
+            $user_token = substr($cookieVnupUser, $index1, $index2 - $index1);
+            $remember_me = substr($cookieVnupUser, $index3, 1);
+            if($remember_me == '1'){
+                $dbUserToken = $this->user_cookie_model->get_user_cookie(
+                                $user_token,
+                                $this->input->user_agent(),
+                                $this->input->ip_address());
+                if(isset($dbUserToken)){
+                    $dataUserData = array(
+                        'user_login' => $dbUserToken->user_login,
+                        'user_email' => $dbUserToken->user_email,
+                        'user_fname' => $dbUserToken->first_name,
+                        'user_lname' => $dbUserToken->last_name,
+                        'user_id' => $dbUserToken->ID
+                    );
+                    $this->session->set_userdata($dataUserData);
+
+                    // TODO : redirect to WHERE ???
+
+                }
+            }
+        }
+
         $this->login();
     }
 
@@ -89,16 +119,16 @@ class User extends CI_Controller
         if(isset($_POST['LoginForm'])){
             $email = $_POST['LoginForm']['email'];
             $pass = $_POST['LoginForm']['password'];
-            $remember_me = $_POST['LoginForm']['remember_me'];
+            $remember_me = $_POST['LoginForm']['rememberMe'];
             $userID = $this->user_model->validate_login($email, $pass);
             if($userID > 0){ // > 0 is valid
-               if(isset($_SESSION['redirect_to'])){
+               // HANDLE COOKIE DATA
+               $this->handleCookie($userID, $remember_me);
 
-                   // HANDLE COOKIE DATA
-                   $this->handleCookie($userID, $remember_me);
+               if(isset($_SESSION['redirect_to'])){
                    redirect($_SESSION['redirect_to']);
                }else{
-                   echo 'login successfully! BUT missing redirect link to url';
+                   redirect($this->homepage);
                }
             }else{
                 echo "Sai username hoac password";

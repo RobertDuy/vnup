@@ -60,14 +60,34 @@
   <!--Fix Navigation Bar with drop down menu -->
     <header>
         <?php
-               //TODO : handle login here
+            session_start();
             if(isset($_SESSION['user_data'])){
-                // NEU CO' ROI THI CHI VIEC LAY RA SHOW
-            }else if(isset($_COOKIE['vnup_user'])){
-                if(json_decode($_COOKIE['vnup_user'])->remember_me == 'TRUE'){
-                    // TODO : query DB to get user data
+                // TODO : show profile HTML menu
 
-                    // TODO : show & set to session['user_data']
+            }else if(isset($_COOKIE['vnup_user'])){
+                $cookieVnupUser = $_COOKIE['vnup_user'];
+                $index1 = strrpos($cookieVnupUser, 'user_token') + strlen('user_token') + 5;
+                $index2 = strrpos($cookieVnupUser, 'remember_me') - 5;
+                $index3 = strrpos($cookieVnupUser, 'remember_me') + strlen('remember_me') + 5;
+
+                $user_token = substr($cookieVnupUser, $index1, $index2 - $index1);
+                $remember_me = substr($cookieVnupUser, $index3, 1);
+                if($remember_me == '1'){
+                    $dbUserToken = $wpdb->get_row("SELECT * FROM $wpdb->user_cookie uc LEFT JOIN $wpdb->users u ON uc.ID = u.ID
+                                                            WHERE user_token= '". $user_token . "'");
+                    if(isset($dbUserToken)){
+                        // INIT USER SESSION DATA
+                        $dataUserData = array(
+                            'user_name' => $dbUserToken->user_login,
+                            'user_email' => $dbUserToken->user_email,
+                            'user_fname' => $dbUserToken->first_name,
+                            'user_lname' => $dbUserToken->last_name,
+                            'user_id' => $dbUserToken->ID
+                        );
+                        $_SESSION['user_data'] = json_encode($dataUserData);
+
+                        // TODO : show profile HTML menu
+                    }
                 }
             }
         ?>
